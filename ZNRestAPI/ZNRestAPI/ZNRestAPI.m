@@ -154,7 +154,8 @@ static ZNRestAPI* instance;
     { operation = [self createBodyEncodedRequestForAPI:api type:type params:params headers:headers]; }
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        completion(YES, responseObject, nil);
+        if(completion != NULL)
+        { completion(YES, responseObject, nil); }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSMutableDictionary* mutableUserInfo = [error.userInfo mutableCopy];
         if(operation)
@@ -169,7 +170,8 @@ static ZNRestAPI* instance;
         }
         mutableUserInfo[NSUnderlyingErrorKey] = error;
         
-        completion(NO, nil, [NSError errorWithDomain:@"ZNRestAPI" code:0 userInfo:mutableUserInfo]);
+        if(completion != NULL)
+        { completion(NO, nil, [NSError errorWithDomain:@"ZNRestAPI" code:0 userInfo:mutableUserInfo]); }
     }];
     [operation start];
 }
